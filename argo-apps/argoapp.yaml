@@ -11,10 +11,10 @@ spec:
   source:
     repoURL: 'https://github.com/sebaandrei/argocd-demo.git'
     targetRevision: HEAD
-    path: charts/
+    path: ./
     helm:
       valueFiles:
-        - ../poc.yaml
+        - poc.yaml
   syncPolicy:
     syncOptions:
     - CreateNamespace=true
