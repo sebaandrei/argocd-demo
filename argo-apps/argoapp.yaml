@@ -1,0 +1,49 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  namespace: argocd
+  name: argocd
+spec:
+  project: infra
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: argocd
+  source:
+    repoURL: 'https://github.com/sebaandrei/argocd-demo.git'
+    targetRevision: HEAD
+    path: charts/
+    helm:
+      valueFiles:
+        - ../poc.yaml
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    automated:
+      prune: true
+    retry:
+      limit: -1
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  namespace: argocd
+  name: argocd-projects
+spec:
+  project: infra
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: argocd
+  source:
+    repoURL: 'https://github.com/sebaandrei/argocd-demo.git'
+    targetRevision: HEAD
+    path: argo-projects/
+    directory:
+      recurse: true
+      jsonnet: {}
+    syncPolicy:
+      automated:
+        selfHeal: true
+        prune: true
+    retry:
+      limit: -1
