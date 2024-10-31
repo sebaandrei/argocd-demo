@@ -1,0 +1,50 @@
+nameOverride: argocd
+namespaceOverride: argocd
+global:
+  # domain: argocd.poc.y00n.org
+
+  logging:
+    level: info
+
+  addPrometheusAnnotations: true
+
+config:
+  server.insecure: true  
+  cmp:
+    create: true
+    plugins:
+      kustomized-helm:
+        init:
+          command: [sh]
+          args: [-c, 'helm dependency build']
+        generate:
+          command: [sh, -c]
+          args:
+            - |
+              helm template --release-name release-name . > all.yaml && kustomize build
+
+redis:
+  enabled: false
+
+redis-ha:
+  enabled: true
+
+server:
+  replicas: 2
+  ingress:
+    enabled: false
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/whitelist-source-range: 130.255.154.223/32,45.149.209.158/32,77.109.186.68/32,212.3.197.244/32,80.89.79.28/32,188.25.0.0/16
+    ingressClassName: nginx
+    hostname: argo.poc.y00n.org
+    path: /
+    ## TLS certificate will be retrieved from a TLS secret `argocd-server-tls`
+    ## You can create this secret via `certificate` or `certificateSecret` option
+    tls: true
+
+repoServer:
+  replicas: 2
+  
