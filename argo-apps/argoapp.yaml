@@ -30,7 +30,7 @@ metadata:
   namespace: argocd
   name: argocd-projects
 spec:
-  project: infra
+  project: default
   destination:
     server: "https://kubernetes.default.svc"
     namespace: argocd
@@ -41,9 +41,9 @@ spec:
     directory:
       recurse: true
       jsonnet: {}
-    syncPolicy:
-      automated:
-        selfHeal: true
-        prune: true
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
     retry:
       limit: -1
